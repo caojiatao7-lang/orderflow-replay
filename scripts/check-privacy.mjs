@@ -1,0 +1,3 @@
+import {execFileSync} from 'node:child_process';import {readFileSync} from 'node:fs';
+const files=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);if(!files.length)throw Error('Stage source files first');
+for(const f of files){if(/(^|\/)(data|private|reports|\.openai)(\/|$)|\.(csv|xlsx?|parquet|gz|zip|tar)$/i.test(f))throw Error('Forbidden file: '+f);const text=f==='scripts/check-privacy.mjs'?'':readFileSync(f,'utf8');if(/22586380|22554042|appgprj_|chatgpt\.site|真实示例片段/.test(text))throw Error('Private marker: '+f);}console.log(`Checked ${files.length} source/demo files; manual review still required.`);
